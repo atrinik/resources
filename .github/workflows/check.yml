@@ -23,4 +23,13 @@ jobs:
       - name: Validate package publisher
         run: |
           bash -n tools/package-release.sh
+          shellcheck tools/*.sh
           test -s paintings/LICENSE
+          test -s runtime-paths.txt
+          release_tag=$(git describe --tags --abbrev=0)
+          tools/package-release.sh "$release_tag" build/validation
+          archive="build/validation/atrinik-resources-${release_tag#v}.tar.gz"
+          tar -tzf "$archive" >build/validation/contents.txt
+          grep -q '/paintings/LICENSE$' build/validation/contents.txt
+          ! grep -Eq '/(README.md|CONTRIBUTING.md|tools|release-line.txt)(/|$)' \
+            build/validation/contents.txt
