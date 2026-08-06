@@ -1,5 +1,10 @@
 /.gitattributes export-ignore
 /.github export-ignore
+/.gitignore export-ignore
+/.releaserc.json export-ignore
+/CONTRIBUTING.md export-ignore
+/README.md export-ignore
+/runtime-paths.txt export-ignore
 /tools export-ignore
 /release-line.txt export-ignore
 *.png filter=lfs diff=lfs merge=lfs -text
