@@ -12,6 +12,11 @@ together under `paintings/`; see `paintings/LICENSE`. Preserve that notice and
 any nearby attribution when adding or replacing resources. This repository
 does not apply a new blanket license to those assets.
 
+`runtime-paths.txt` is the allowlist of tracked paths distributed to servers.
+Add each new top-level asset collection there; repository documentation,
+release tooling, untracked files, and other development metadata are not game
+resources and must not be exposed through the server's asset protocol.
+
 ## Releases
 
 Every squash merge uses its Conventional Commits pull-request title to create
