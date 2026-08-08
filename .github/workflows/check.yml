@@ -15,21 +15,12 @@ jobs:
   asset-validation:
     name: Asset validation
     runs-on: ubuntu-24.04
+    container: ghcr.io/atrinik/linux-build:ubuntu-26.04@sha256:6e128d58125dfa0f4553c112ba76616f84aa448728dfc0fc235eb52a1024a53d
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
       - name: Validate package publisher
-        run: |
-          bash -n tools/package-release.sh
-          shellcheck tools/*.sh
-          test -s paintings/LICENSE
-          test -s runtime-paths.txt
-          release_tag=$(git describe --tags --abbrev=0)
-          tools/package-release.sh "$release_tag" build/validation
-          archive="build/validation/atrinik-resources-${release_tag#v}.tar.gz"
-          tar -tzf "$archive" >build/validation/contents.txt
-          grep -q '/paintings/LICENSE$' build/validation/contents.txt
-          ! grep -Eq '/(README.md|CONTRIBUTING.md|tools|release-line.txt)(/|$)' \
-            build/validation/contents.txt
+        run: tools/validate.sh
