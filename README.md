@@ -47,3 +47,8 @@ Every squash merge uses its Conventional Commits pull-request title to create
 at least a patch release. Each release publishes a deterministic
 `atrinik-resources-VERSION.tar.gz` archive and `SHA256SUMS`; consumers pin the
 tag, source commit, asset URL, and SHA-256 digest.
+
+Validation runs directly on `ubuntu-24.04` and installs actionlint 1.7.9 from
+its SHA-256-pinned upstream archive. Release automation uses the immutable
+GitHub-owned setup-node v7 action with Node 24.18.1; it does not depend on a
+private organization container package.
