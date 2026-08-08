@@ -2,23 +2,37 @@
 
 set -euo pipefail
 
-if [[ $# -ne 2 ]]; then
+if [[ $# -eq 2 ]]; then
+  revision=$1
+  output_directory=$2
+  if [[ ! ${revision} =~ ^v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+    echo "invalid release tag: ${revision}" >&2
+    exit 1
+  fi
+  version=${BASH_REMATCH[1]}
+elif [[ $# -eq 5 && $1 == --version && $3 == --revision ]]; then
+  version=$2
+  revision=$4
+  output_directory=$5
+  if [[ ! ${version} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "invalid release version: ${version}" >&2
+    exit 1
+  fi
+else
   echo "usage: $0 TAG OUTPUT_DIRECTORY" >&2
+  echo "       $0 --version MAJOR.MINOR.PATCH --revision COMMIT OUTPUT_DIRECTORY" >&2
   exit 2
 fi
 
-tag=$1
-output_directory=$2
-if [[ ! ${tag} =~ ^v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
-  echo "invalid release tag: ${tag}" >&2
+package=atrinik-resources-${version}
+if [[ -e ${output_directory} ]]; then
+  echo "release output already exists: ${output_directory}" >&2
   exit 1
 fi
-
-version=${BASH_REMATCH[1]}
-package=atrinik-resources-${version}
 mkdir -p "${output_directory}"
 
-git cat-file -e "${tag}^{commit}"
+git cat-file -e "${revision}^{commit}"
+resolved_revision=$(git rev-parse "${revision}^{commit}")
 mapfile -t runtime_paths <runtime-paths.txt
 if [[ ${#runtime_paths[@]} -eq 0 ]]; then
   echo "runtime-paths.txt must list at least one path" >&2
@@ -32,12 +46,40 @@ for path in "${runtime_paths[@]}"; do
     exit 1
   fi
   seen_paths[${path}]=1
-  git cat-file -e "${tag}:${path}"
+  git cat-file -e "${revision}:${path}"
 done
+while IFS= read -r -d '' entry; do
+  mode=${entry%% *}
+  path=${entry#*$'\t'}
+  if [[ ${mode} != 100644 ]]; then
+    echo "runtime resource must be a non-executable regular file: ${path}" >&2
+    exit 1
+  fi
+  case ${path} in
+    *.jpg|*.json|*/LICENSE) ;;
+    *)
+      echo "unsupported runtime resource type: ${path}" >&2
+      exit 1
+      ;;
+  esac
+done < <(git ls-tree -r -z "${revision}" -- "${runtime_paths[@]}")
 git archive --format=tar.gz --prefix="${package}/" \
-  --output="${output_directory}/${package}.tar.gz" "${tag}" -- \
+  --output="${output_directory}/${package}.tar.gz" "${revision}" -- \
   "${runtime_paths[@]}"
+catalog_sha256=$(git show "${revision}:catalog/resources.json" | sha256sum | cut -d' ' -f1)
+jq -n \
+  --arg version "${version}" \
+  --arg requested_revision "${revision}" \
+  --arg resolved_revision "${resolved_revision}" \
+  --arg archive "${package}.tar.gz" \
+  --arg catalog_sha256 "${catalog_sha256}" \
+  '{schema_version: 1, version: $version,
+    requested_revision: $requested_revision,
+    resolved_revision: $resolved_revision,
+    archive: $archive,
+    catalog_sha256: $catalog_sha256}' \
+  >"${output_directory}/RELEASE.json"
 (
   cd "${output_directory}"
-  sha256sum "${package}.tar.gz" >SHA256SUMS
+  sha256sum "${package}.tar.gz" RELEASE.json >SHA256SUMS
 )

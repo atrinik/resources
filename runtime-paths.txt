@@ -1,1 +1,3 @@
 paintings
+catalog/resources.json
+catalog/allowlists

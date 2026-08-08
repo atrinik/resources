@@ -1,0 +1,46 @@
+{
+  "consumer": "server-stream",
+  "resources": [
+    {
+      "resource_id": "atrinik:painting:canopy",
+      "sha256": "bee62ab315460bfc0c4d3e2636a5924fe92f6f5487fb90b51fbe3bbed3c88c3f"
+    },
+    {
+      "resource_id": "atrinik:painting:cave_entrance",
+      "sha256": "869f37597531782904d2ad333bebb08f89e6707e441f12c5f21d8d6ac333110f"
+    },
+    {
+      "resource_id": "atrinik:painting:forest",
+      "sha256": "3deca2f1ae646365c5f62125fef4fa8c20cab82b2ab97956ec0bf3970e9626ef"
+    },
+    {
+      "resource_id": "atrinik:painting:hill",
+      "sha256": "803f40dfd1907915e8b8d3739c6fa5c4566766630161632c5198d1afd996b513"
+    },
+    {
+      "resource_id": "atrinik:painting:hill2",
+      "sha256": "45d74ec6c889160283e3a75f50d44137ea92aeaaa7360e641882e2120b321749"
+    },
+    {
+      "resource_id": "atrinik:painting:lake",
+      "sha256": "421f2ebdf042568ffbaf6732b0c8cdecc828fea78a15e5132e011fab382a4af2"
+    },
+    {
+      "resource_id": "atrinik:painting:moon",
+      "sha256": "f8c300a7f3d9c8094641a73da30c524183c33b5485e3ae15bac10e8c86100470"
+    },
+    {
+      "resource_id": "atrinik:painting:ruins",
+      "sha256": "3db2787ee166539e08cd76ec564214ad92c7c8bfc27f49ed83f2dd6224d97506"
+    },
+    {
+      "resource_id": "atrinik:painting:waterfall",
+      "sha256": "17b73791b23f7bf9c0f872c8683c7831a45c82a54c9500bdb2c6cbebe1ec852a"
+    },
+    {
+      "resource_id": "atrinik:painting:wolf",
+      "sha256": "08884dd86ae5185ec41bcfa656629b80bbf3354bf5c4c13cea1d8b68ef8253b7"
+    }
+  ],
+  "schema_version": 1
+}
