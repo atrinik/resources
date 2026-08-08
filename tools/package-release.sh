@@ -25,9 +25,14 @@ else
 fi
 
 package=atrinik-resources-${version}
+if [[ -e ${output_directory} ]]; then
+  echo "release output already exists: ${output_directory}" >&2
+  exit 1
+fi
 mkdir -p "${output_directory}"
 
 git cat-file -e "${revision}^{commit}"
+resolved_revision=$(git rev-parse "${revision}^{commit}")
 mapfile -t runtime_paths <runtime-paths.txt
 if [[ ${#runtime_paths[@]} -eq 0 ]]; then
   echo "runtime-paths.txt must list at least one path" >&2
@@ -61,7 +66,20 @@ done < <(git ls-tree -r -z "${revision}" -- "${runtime_paths[@]}")
 git archive --format=tar.gz --prefix="${package}/" \
   --output="${output_directory}/${package}.tar.gz" "${revision}" -- \
   "${runtime_paths[@]}"
+catalog_sha256=$(git show "${revision}:catalog/resources.json" | sha256sum | cut -d' ' -f1)
+jq -n \
+  --arg version "${version}" \
+  --arg requested_revision "${revision}" \
+  --arg resolved_revision "${resolved_revision}" \
+  --arg archive "${package}.tar.gz" \
+  --arg catalog_sha256 "${catalog_sha256}" \
+  '{schema_version: 1, version: $version,
+    requested_revision: $requested_revision,
+    resolved_revision: $resolved_revision,
+    archive: $archive,
+    catalog_sha256: $catalog_sha256}' \
+  >"${output_directory}/RELEASE.json"
 (
   cd "${output_directory}"
-  sha256sum "${package}.tar.gz" >SHA256SUMS
+  sha256sum "${package}.tar.gz" RELEASE.json >SHA256SUMS
 )

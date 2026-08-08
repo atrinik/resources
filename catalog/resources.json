@@ -7,6 +7,21 @@
   "resources": [
     {
       "attribution": "Alex \"Cleo\" Tokar",
+      "complete_history": [
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/canopy.jpg",
+          "revision": "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f"
+        },
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/canopy.png",
+          "revision": "f9c0850b7deabacb3cc14875256caac9fb90ab64"
+        }
+      ],
+      "dependencies": [],
       "derivative_base_chain": [
         {
           "path": "paintings/canopy.png",
@@ -16,13 +31,10 @@
         }
       ],
       "height": 500,
-      "history_revisions": [
-        "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f",
-        "f9c0850b7deabacb3cc14875256caac9fb90ab64"
-      ],
       "license": "CC-BY-SA-3.0",
       "media_type": "image/jpeg",
       "notice_path": "paintings/LICENSE",
+      "notice_sha256": "3cabd6ec1db66713b5c97e4fe205230810b31a60603196148b02002bfb5d1bcc",
       "path": "paintings/canopy.jpg",
       "permitted_consumers": [
         "client-package",
@@ -53,14 +65,21 @@
     },
     {
       "attribution": "Alex \"Cleo\" Tokar",
+      "complete_history": [
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/cave_entrance.jpg",
+          "revision": "f9c0850b7deabacb3cc14875256caac9fb90ab64"
+        }
+      ],
+      "dependencies": [],
       "derivative_base_chain": [],
       "height": 500,
-      "history_revisions": [
-        "f9c0850b7deabacb3cc14875256caac9fb90ab64"
-      ],
       "license": "CC-BY-SA-3.0",
       "media_type": "image/jpeg",
       "notice_path": "paintings/LICENSE",
+      "notice_sha256": "3cabd6ec1db66713b5c97e4fe205230810b31a60603196148b02002bfb5d1bcc",
       "path": "paintings/cave_entrance.jpg",
       "permitted_consumers": [
         "client-package",
@@ -89,6 +108,21 @@
     },
     {
       "attribution": "Alex \"Cleo\" Tokar",
+      "complete_history": [
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/forest.jpg",
+          "revision": "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f"
+        },
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/forest.png",
+          "revision": "f9c0850b7deabacb3cc14875256caac9fb90ab64"
+        }
+      ],
+      "dependencies": [],
       "derivative_base_chain": [
         {
           "path": "paintings/forest.png",
@@ -98,13 +132,10 @@
         }
       ],
       "height": 500,
-      "history_revisions": [
-        "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f",
-        "f9c0850b7deabacb3cc14875256caac9fb90ab64"
-      ],
       "license": "CC-BY-SA-3.0",
       "media_type": "image/jpeg",
       "notice_path": "paintings/LICENSE",
+      "notice_sha256": "3cabd6ec1db66713b5c97e4fe205230810b31a60603196148b02002bfb5d1bcc",
       "path": "paintings/forest.jpg",
       "permitted_consumers": [
         "client-package",
@@ -135,6 +166,21 @@
     },
     {
       "attribution": "Alex \"Cleo\" Tokar",
+      "complete_history": [
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/hill.jpg",
+          "revision": "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f"
+        },
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/hill.png",
+          "revision": "f9c0850b7deabacb3cc14875256caac9fb90ab64"
+        }
+      ],
+      "dependencies": [],
       "derivative_base_chain": [
         {
           "path": "paintings/hill.png",
@@ -144,13 +190,10 @@
         }
       ],
       "height": 500,
-      "history_revisions": [
-        "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f",
-        "f9c0850b7deabacb3cc14875256caac9fb90ab64"
-      ],
       "license": "CC-BY-SA-3.0",
       "media_type": "image/jpeg",
       "notice_path": "paintings/LICENSE",
+      "notice_sha256": "3cabd6ec1db66713b5c97e4fe205230810b31a60603196148b02002bfb5d1bcc",
       "path": "paintings/hill.jpg",
       "permitted_consumers": [
         "client-package",
@@ -181,14 +224,21 @@
     },
     {
       "attribution": "Alex \"Cleo\" Tokar",
+      "complete_history": [
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/hill2.jpg",
+          "revision": "f9c0850b7deabacb3cc14875256caac9fb90ab64"
+        }
+      ],
+      "dependencies": [],
       "derivative_base_chain": [],
       "height": 500,
-      "history_revisions": [
-        "f9c0850b7deabacb3cc14875256caac9fb90ab64"
-      ],
       "license": "CC-BY-SA-3.0",
       "media_type": "image/jpeg",
       "notice_path": "paintings/LICENSE",
+      "notice_sha256": "3cabd6ec1db66713b5c97e4fe205230810b31a60603196148b02002bfb5d1bcc",
       "path": "paintings/hill2.jpg",
       "permitted_consumers": [
         "client-package",
@@ -217,6 +267,21 @@
     },
     {
       "attribution": "Alex \"Cleo\" Tokar",
+      "complete_history": [
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/lake.jpg",
+          "revision": "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f"
+        },
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/lake.png",
+          "revision": "f9c0850b7deabacb3cc14875256caac9fb90ab64"
+        }
+      ],
+      "dependencies": [],
       "derivative_base_chain": [
         {
           "path": "paintings/lake.png",
@@ -226,13 +291,10 @@
         }
       ],
       "height": 500,
-      "history_revisions": [
-        "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f",
-        "f9c0850b7deabacb3cc14875256caac9fb90ab64"
-      ],
       "license": "CC-BY-SA-3.0",
       "media_type": "image/jpeg",
       "notice_path": "paintings/LICENSE",
+      "notice_sha256": "3cabd6ec1db66713b5c97e4fe205230810b31a60603196148b02002bfb5d1bcc",
       "path": "paintings/lake.jpg",
       "permitted_consumers": [
         "client-package",
@@ -263,6 +325,21 @@
     },
     {
       "attribution": "Alex \"Cleo\" Tokar",
+      "complete_history": [
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/moon.jpg",
+          "revision": "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f"
+        },
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/moon.png",
+          "revision": "f9c0850b7deabacb3cc14875256caac9fb90ab64"
+        }
+      ],
+      "dependencies": [],
       "derivative_base_chain": [
         {
           "path": "paintings/moon.png",
@@ -272,13 +349,10 @@
         }
       ],
       "height": 500,
-      "history_revisions": [
-        "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f",
-        "f9c0850b7deabacb3cc14875256caac9fb90ab64"
-      ],
       "license": "CC-BY-SA-3.0",
       "media_type": "image/jpeg",
       "notice_path": "paintings/LICENSE",
+      "notice_sha256": "3cabd6ec1db66713b5c97e4fe205230810b31a60603196148b02002bfb5d1bcc",
       "path": "paintings/moon.jpg",
       "permitted_consumers": [
         "client-package",
@@ -309,6 +383,21 @@
     },
     {
       "attribution": "Alex \"Cleo\" Tokar",
+      "complete_history": [
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/ruins.jpg",
+          "revision": "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f"
+        },
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/ruins.png",
+          "revision": "f9c0850b7deabacb3cc14875256caac9fb90ab64"
+        }
+      ],
+      "dependencies": [],
       "derivative_base_chain": [
         {
           "path": "paintings/ruins.png",
@@ -318,13 +407,10 @@
         }
       ],
       "height": 500,
-      "history_revisions": [
-        "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f",
-        "f9c0850b7deabacb3cc14875256caac9fb90ab64"
-      ],
       "license": "CC-BY-SA-3.0",
       "media_type": "image/jpeg",
       "notice_path": "paintings/LICENSE",
+      "notice_sha256": "3cabd6ec1db66713b5c97e4fe205230810b31a60603196148b02002bfb5d1bcc",
       "path": "paintings/ruins.jpg",
       "permitted_consumers": [
         "client-package",
@@ -355,6 +441,21 @@
     },
     {
       "attribution": "Alex \"Cleo\" Tokar",
+      "complete_history": [
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/waterfall.jpg",
+          "revision": "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f"
+        },
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/waterfall.png",
+          "revision": "f9c0850b7deabacb3cc14875256caac9fb90ab64"
+        }
+      ],
+      "dependencies": [],
       "derivative_base_chain": [
         {
           "path": "paintings/waterfall.png",
@@ -364,13 +465,10 @@
         }
       ],
       "height": 500,
-      "history_revisions": [
-        "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f",
-        "f9c0850b7deabacb3cc14875256caac9fb90ab64"
-      ],
       "license": "CC-BY-SA-3.0",
       "media_type": "image/jpeg",
       "notice_path": "paintings/LICENSE",
+      "notice_sha256": "3cabd6ec1db66713b5c97e4fe205230810b31a60603196148b02002bfb5d1bcc",
       "path": "paintings/waterfall.jpg",
       "permitted_consumers": [
         "client-package",
@@ -401,6 +499,21 @@
     },
     {
       "attribution": "Alex \"Cleo\" Tokar",
+      "complete_history": [
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/wolf.jpg",
+          "revision": "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f"
+        },
+        {
+          "email": "admin@atokar.net",
+          "name": "Alex Tokar",
+          "path": "paintings/wolf.png",
+          "revision": "f9c0850b7deabacb3cc14875256caac9fb90ab64"
+        }
+      ],
+      "dependencies": [],
       "derivative_base_chain": [
         {
           "path": "paintings/wolf.png",
@@ -410,13 +523,10 @@
         }
       ],
       "height": 500,
-      "history_revisions": [
-        "d629f89f1ae4cbffdfd201009ae1b1821c8c3f1f",
-        "f9c0850b7deabacb3cc14875256caac9fb90ab64"
-      ],
       "license": "CC-BY-SA-3.0",
       "media_type": "image/jpeg",
       "notice_path": "paintings/LICENSE",
+      "notice_sha256": "3cabd6ec1db66713b5c97e4fe205230810b31a60603196148b02002bfb5d1bcc",
       "path": "paintings/wolf.jpg",
       "permitted_consumers": [
         "client-package",

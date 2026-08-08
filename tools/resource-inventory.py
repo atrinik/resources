@@ -179,6 +179,25 @@ def source_history(root: Path, revision: str, prefix: str) -> dict[str, list[dic
     return history
 
 
+def path_history(root: Path, revision: str, path: str) -> list[dict[str, str]]:
+    output = run_git(
+        root,
+        "log",
+        "--follow",
+        "--format=%H%x1f%aN%x1f%aE",
+        revision,
+        "--",
+        path,
+    )
+    records = []
+    for line in output.splitlines():
+        if not line:
+            continue
+        commit, name, email = line.split("\x1f")
+        records.append({"revision": commit, "name": name, "email": email, "path": path})
+    return records
+
+
 def declared_content_licenses(root: Path) -> dict[str, dict[str, str]]:
     declarations: dict[str, list[dict[str, str]]] = {}
     for notice in sorted(root.rglob("LICENSE")):
@@ -322,7 +341,9 @@ def painting_catalog(repository_root: Path) -> dict[str, Any]:
         )
         transformations = [] if name in ORIGINAL_JPEGS else ["lossy PNG-to-JPEG conversion"]
         base_chain = []
-        history_revisions = [source_revision]
+        jpeg_path = f"paintings/{name}"
+        history = path_history(repository_root, "HEAD", jpeg_path)
+        expected_history_revisions = [source_revision]
         if name not in ORIGINAL_JPEGS:
             original_path = f"paintings/{Path(name).stem}.png"
             original_bytes = git_bytes(repository_root, PAINTING_ORIGINAL_REVISION, original_path)
@@ -334,7 +355,16 @@ def painting_catalog(repository_root: Path) -> dict[str, Any]:
                     "sha256": hashlib.sha256(original_bytes).hexdigest(),
                 }
             ]
-            history_revisions.append(PAINTING_ORIGINAL_REVISION)
+            history.extend(path_history(repository_root, PAINTING_ORIGINAL_REVISION, original_path))
+            expected_history_revisions.append(PAINTING_ORIGINAL_REVISION)
+        if [record["revision"] for record in history] != expected_history_revisions:
+            raise InventoryError(f"painting history changed and requires review: {name}")
+        if any(
+            record["name"] != PAINTING_AUTHOR["name"]
+            or record["email"] != PAINTING_AUTHOR["email"]
+            for record in history
+        ):
+            raise InventoryError(f"painting author identity changed and requires review: {name}")
         records.append(
             {
                 "resource_id": f"atrinik:painting:{Path(name).stem}",
@@ -343,14 +373,16 @@ def painting_catalog(repository_root: Path) -> dict[str, Any]:
                 "source": {
                     "repository": RESOURCE_REPOSITORY,
                     "revision": source_revision,
-                    "path": f"paintings/{name}",
+                    "path": jpeg_path,
                     "authors": [PAINTING_AUTHOR],
                 },
                 "provenance_class": "compatible_third_party",
-                "history_revisions": history_revisions,
+                "complete_history": history,
                 "license": "CC-BY-SA-3.0",
                 "attribution": 'Alex "Cleo" Tokar',
                 "notice_path": "paintings/LICENSE",
+                "notice_sha256": digest(repository_root / "paintings" / "LICENSE"),
+                "dependencies": [],
                 "derivative_base_chain": base_chain,
                 "transformations": transformations,
                 "permitted_consumers": [
