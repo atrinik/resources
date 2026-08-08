@@ -508,6 +508,8 @@ def load_json_lines(path: Path) -> list[dict[str, Any]]:
 
 
 def validate_snapshot(repository_root: Path) -> None:
+    if run_git(repository_root, "rev-parse", "--is-shallow-repository").strip() != "false":
+        raise InventoryError("resource catalog validation requires complete Git history")
     catalog_path = repository_root / "catalog" / "resources.json"
     catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
     expected_catalog = painting_catalog(repository_root)
