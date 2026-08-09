@@ -1,9 +1,11 @@
 # Atrinik server resources
 
-This repository owns the separately released media resources consumed by the
-Atrinik server. Server source and container/package assembly live in
-[`atrinik/server`](https://github.com/atrinik/server), which pins this
-repository's release archive instead of using a Git submodule.
+This repository owns separately released server media resources. The
+maintained consumer is
+[`atrinik/classic/server`](https://github.com/atrinik/classic/tree/main/server);
+the fresh [`atrinik/server`](https://github.com/atrinik/server) will consume a
+released archive when replacement integration lands. Consumers use immutable
+checksum-pinned releases instead of Git submodules.
 
 ## Licensing and attribution
 
