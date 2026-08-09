@@ -1,7 +1,9 @@
 # Atrinik resources repository guide
 
-- This repository owns separately released server media resources. Server code,
-  runtime assembly, and container packaging remain in the server repository.
+- This repository owns separately released server media resources. The
+  maintained consumer is `atrinik/classic/server`; replacement consumption
+  belongs to `atrinik/server` when its integration lands. Keep server code,
+  runtime assembly, and container packaging with the consuming server.
 - `runtime-paths.txt` is the distribution boundary. Release archives may contain
   only non-executable tracked regular files under its allowlisted asset and
   catalog paths; do not package candidate inventories, repository metadata,
