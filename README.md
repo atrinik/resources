@@ -35,7 +35,15 @@ tools/resource-inventory.py generate \
 tools/resource-inventory.py validate \
   --classic-root /path/to/classic \
   --content-root /path/to/content
+
+tools/validate.sh \
+  --classic-root /path/to/classic \
+  --content-root /path/to/content
 ```
+
+The validation roots must be complete, clean checkouts at the pinned revisions
+recorded by the inventory tool. CI checks them out under `.ci-sources/`, which
+is ignored and never enters a release archive.
 
 `runtime-paths.txt` is the allowlist of tracked assets and release-catalog
 paths distributed to consumers.

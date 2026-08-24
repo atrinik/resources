@@ -43,6 +43,7 @@ MAX_RESOURCE_BYTES = 64 * 1024 * 1024
 MAX_DIMENSION = 8192
 EXPECTED_CONTENT_VISUALS = 9413
 EXPECTED_CONTENT_UNMATCHED = 526
+LFS_POINTER_VERSION = "version https://git-lfs.github.com/spec/v1"
 EXPECTED_CLASSIC_VISUALS = 125
 
 
@@ -61,14 +62,171 @@ def run_git(root: Path, *arguments: str) -> str:
     return result.stdout
 
 
-def git_bytes(root: Path, revision: str, path: str) -> bytes:
+def git_revision_exists(root: Path, revision: str) -> bool:
     result = subprocess.run(
-        ("git", "-C", str(root), "show", f"{revision}:{path}"),
-        check=True,
-        stdout=subprocess.PIPE,
+        (
+            "git",
+            "-C",
+            str(root),
+            "cat-file",
+            "-e",
+            "--end-of-options",
+            f"{revision}^{{commit}}",
+        ),
+        stdout=subprocess.DEVNULL,
         stderr=subprocess.PIPE,
     )
-    return result.stdout
+    return result.returncode == 0
+
+
+def parse_lfs_pointer(value: bytes) -> tuple[str, int] | None:
+    if not value.startswith(f"{LFS_POINTER_VERSION}\n".encode("ascii")):
+        return None
+    try:
+        lines = value.decode("ascii").splitlines()
+    except UnicodeDecodeError as error:
+        raise InventoryError("malformed Git LFS pointer is not ASCII") from error
+
+    fields: dict[str, str] = {}
+    for line in lines:
+        if not line:
+            continue
+        key, separator, field_value = line.partition(" ")
+        if not separator or key in fields or (
+            key not in {"version", "oid", "size"} and not key.startswith("ext-")
+        ):
+            raise InventoryError("malformed Git LFS pointer")
+        fields[key] = field_value
+
+    oid = fields.get("oid", "")
+    if (
+        fields.get("version") != LFS_POINTER_VERSION.removeprefix("version ")
+        or not oid.startswith("sha256:")
+        or len(oid) != len("sha256:") + 64
+        or any(character not in "0123456789abcdef" for character in oid[len("sha256:") :])
+    ):
+        raise InventoryError("malformed Git LFS pointer oid")
+
+    size_text = fields.get("size", "")
+    if not size_text.isdecimal():
+        raise InventoryError("malformed Git LFS pointer size")
+    size = int(size_text)
+    if size > MAX_RESOURCE_BYTES:
+        raise InventoryError(f"Git LFS payload exceeds the byte bound: {size}")
+    return oid[len("sha256:") :], size
+
+
+def git_bytes(root: Path, revision: str, path: str) -> bytes:
+    try:
+        result = subprocess.run(
+            ("git", "-C", str(root), "show", f"{revision}:{path}"),
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise InventoryError(f"historical provenance path is unavailable: {revision}:{path}") from error
+
+    pointer = parse_lfs_pointer(result.stdout)
+    if pointer is None:
+        if len(result.stdout) > MAX_RESOURCE_BYTES:
+            raise InventoryError(f"historical provenance exceeds the byte bound: {revision}:{path}")
+        return result.stdout
+
+    oid, expected_size = pointer
+    try:
+        hydrated = subprocess.run(
+            ("git", "-C", str(root), "lfs", "smudge"),
+            input=result.stdout,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        ).stdout
+    except FileNotFoundError as error:
+        raise InventoryError(
+            f"Git LFS is required for historical provenance: {revision}:{path} "
+            f"(oid sha256:{oid})"
+        ) from error
+    except subprocess.CalledProcessError as error:
+        raise InventoryError(
+            f"historical LFS payload is unavailable: {revision}:{path} "
+            f"(oid sha256:{oid}, size {expected_size})"
+        ) from error
+
+    if len(hydrated) != expected_size:
+        raise InventoryError(
+            f"historical LFS payload size mismatch: {revision}:{path} "
+            f"(oid sha256:{oid}, expected {expected_size}, got {len(hydrated)})"
+        )
+    actual_oid = hashlib.sha256(hydrated).hexdigest()
+    if actual_oid != oid:
+        raise InventoryError(
+            f"historical LFS payload hash mismatch: {revision}:{path} "
+            f"(oid sha256:{oid}, got sha256:{actual_oid})"
+        )
+    return hydrated
+
+
+def expected_provenance_inputs() -> tuple[tuple[str, str], ...]:
+    inputs: set[tuple[str, str]] = set()
+    for name in PAINTING_NAMES:
+        source_revision = (
+            PAINTING_ORIGINAL_REVISION if name in ORIGINAL_JPEGS else PAINTING_CONVERSION_REVISION
+        )
+        inputs.add((source_revision, f"paintings/{name}"))
+        if name not in ORIGINAL_JPEGS:
+            inputs.add((PAINTING_ORIGINAL_REVISION, f"paintings/{Path(name).stem}.png"))
+    return tuple(sorted(inputs))
+
+
+def require_provenance_revision(root: Path, revision: str) -> None:
+    if len(revision) != 40 or any(character not in "0123456789abcdef" for character in revision):
+        raise InventoryError(f"invalid provenance revision: {revision}")
+    if not git_revision_exists(root, revision):
+        raise InventoryError(
+            f"provenance commit is unavailable: {revision}; fetch the pinned history before validation"
+        )
+
+
+def fetch_provenance(root: Path) -> None:
+    for revision in sorted({revision for revision, _ in expected_provenance_inputs()}):
+        if not git_revision_exists(root, revision):
+            try:
+                run_git(root, "fetch", "--no-tags", "--no-write-fetch-head", "origin", revision)
+            except (OSError, subprocess.CalledProcessError) as error:
+                raise InventoryError(f"could not fetch provenance commit: {revision}") from error
+        try:
+            run_git(root, "lfs", "fetch", "origin", revision)
+        except (OSError, subprocess.CalledProcessError) as error:
+            raise InventoryError(f"could not fetch LFS provenance objects: {revision}") from error
+
+    for revision, path in expected_provenance_inputs():
+        require_provenance_revision(root, revision)
+        git_bytes(root, revision, path)
+
+
+def validate_catalog_provenance(root: Path, catalog: dict[str, Any]) -> None:
+    inputs: set[tuple[str, str]] = set()
+    expected_hashes: dict[tuple[str, str], str] = {}
+    for resource in catalog.get("resources", []):
+        for field in ("source",):
+            source = resource[field]
+            inputs.add((source["revision"], source["path"]))
+        for history in resource["complete_history"]:
+            inputs.add((history["revision"], history["path"]))
+        for base in resource["derivative_base_chain"]:
+            coordinate = (base["revision"], base["path"])
+            inputs.add(coordinate)
+            previous = expected_hashes.setdefault(coordinate, base["sha256"])
+            if previous != base["sha256"]:
+                raise InventoryError(f"conflicting provenance hashes: {base['path']}")
+
+    for revision, path in sorted(inputs):
+        require_provenance_revision(root, revision)
+        payload = git_bytes(root, revision, path)
+        expected_hash = expected_hashes.get((revision, path))
+        if expected_hash is not None and hashlib.sha256(payload).hexdigest() != expected_hash:
+            raise InventoryError(f"provenance payload hash changed: {revision}:{path}")
 
 
 def require_source(root: Path, revision: str) -> None:
@@ -342,7 +500,7 @@ def painting_catalog(repository_root: Path) -> dict[str, Any]:
         transformations = [] if name in ORIGINAL_JPEGS else ["lossy PNG-to-JPEG conversion"]
         base_chain = []
         jpeg_path = f"paintings/{name}"
-        history = path_history(repository_root, "HEAD", jpeg_path)
+        history = path_history(repository_root, source_revision, jpeg_path)
         expected_history_revisions = [source_revision]
         if name not in ORIGINAL_JPEGS:
             original_path = f"paintings/{Path(name).stem}.png"
@@ -512,6 +670,7 @@ def validate_snapshot(repository_root: Path) -> None:
         raise InventoryError("resource catalog validation requires complete Git history")
     catalog_path = repository_root / "catalog" / "resources.json"
     catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+    validate_catalog_provenance(repository_root, catalog)
     expected_catalog = painting_catalog(repository_root)
     if catalog != expected_catalog:
         raise InventoryError("catalog/resources.json is stale; run generate")
@@ -618,6 +777,7 @@ def validate_sources(repository_root: Path, classic_root: Path, content_root: Pa
 def main() -> int:
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="command", required=True)
+    subparsers.add_parser("fetch-provenance")
     generate_parser = subparsers.add_parser("generate")
     generate_parser.add_argument("--classic-root", type=Path, required=True)
     generate_parser.add_argument("--content-root", type=Path, required=True)
@@ -627,7 +787,9 @@ def main() -> int:
     arguments = parser.parse_args()
     repository_root = Path(run_git(Path.cwd(), "rev-parse", "--show-toplevel").strip())
     try:
-        if arguments.command == "generate":
+        if arguments.command == "fetch-provenance":
+            fetch_provenance(repository_root)
+        elif arguments.command == "generate":
             generate(repository_root, arguments.classic_root.resolve(), arguments.content_root.resolve())
         else:
             validate_snapshot(repository_root)
