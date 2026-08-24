@@ -22,8 +22,29 @@ jobs:
           fetch-depth: 0
           lfs: true
 
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: atrinik/classic
+          ref: 49304ea3ba2507e1ee3380652a90c2c6c5af709b
+          path: .ci-sources/classic
+          fetch-depth: 0
+          lfs: true
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: atrinik/content
+          ref: 01b1fdb65c2243df4bafe9c8109fc93229df0121
+          path: .ci-sources/content
+          fetch-depth: 0
+          lfs: true
+          persist-credentials: false
+
+      - name: Fetch pinned historical provenance
+        run: tools/resource-inventory.py fetch-provenance
+
       - name: Install pinned validation dependencies
         run: tools/install-ci-dependencies.sh
 
       - name: Validate package publisher
-        run: tools/validate.sh
+        run: tools/validate.sh --classic-root .ci-sources/classic --content-root .ci-sources/content

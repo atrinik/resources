@@ -5,8 +5,27 @@ set -euo pipefail
 repository=$(git rev-parse --show-toplevel)
 cd "${repository}"
 
+if [[ $# -eq 0 ]]; then
+  classic_root=
+  content_root=
+elif [[ $# -eq 4 && $1 == --classic-root && $3 == --content-root ]]; then
+  classic_root=$2
+  content_root=$4
+else
+  echo "usage: $0 [--classic-root PATH --content-root PATH]" >&2
+  exit 2
+fi
+
 python3 -m compileall -q tools
-tools/resource-inventory.py validate
+tools/resource-inventory.py fetch-provenance
+python3 tools/test-resource-inventory.py
+if [[ -n ${classic_root} ]]; then
+  tools/resource-inventory.py validate \
+    --classic-root "${classic_root}" \
+    --content-root "${content_root}"
+else
+  tools/resource-inventory.py validate
+fi
 jq empty catalog/*.json catalog/allowlists/*.json
 
 bash -n tools/*.sh
