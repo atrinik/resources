@@ -234,6 +234,8 @@ def require_source(root: Path, revision: str) -> None:
         raise InventoryError(f"{root} is not at pinned revision {revision}")
     if run_git(root, "rev-parse", "--is-shallow-repository").strip() != "false":
         raise InventoryError(f"{root} must have complete Git history")
+    if run_git(root, "status", "--porcelain=v1", "--untracked-files=all").strip():
+        raise InventoryError(f"{root} must be a clean checkout")
 
 
 def digest(path: Path) -> str:
