@@ -26,6 +26,11 @@
   Python compilation, catalog projections, candidate exclusions, ShellCheck,
   actionlint, deterministic archives, checksums, notices, and the absence of
   excluded development paths.
+- Dependency review is advisory: implementing agents read its latest run summary
+  for the current PR head even when a bot comment exists, then fix actionable
+  introduced risks or record explicit maintainer acceptance of existing risks
+  before merge. License metadata does not certify compatibility; existing
+  repository license and provenance rules still apply.
 - Commits and pull-request titles use Conventional Commits. Every squash merge
   is released by semantic-release.
 - Keep package output under `build/`, preserve unrelated work, and finish with
