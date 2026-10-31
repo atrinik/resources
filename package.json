@@ -2,11 +2,12 @@
   "name": "atrinik-resources-release",
   "private": true,
   "scripts": {
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "test:release": "node scripts/release/test-release-policy.cjs && node scripts/release/test-release-notes.cjs"
   },
   "devDependencies": {
     "@semantic-release/exec": "7.1.0",
-    "conventional-changelog-conventionalcommits": "10.4.1",
+    "conventional-changelog-conventionalcommits": "9.3.1",
     "semantic-release": "25.0.9"
   }
 }
