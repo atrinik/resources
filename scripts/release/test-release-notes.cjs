@@ -35,8 +35,8 @@ async function main() {
   assert.match(notes, /BREAKING CHANGES/);
   assert.match(notes, /consumers must read schema two/);
   const links = Array.from(notes.matchAll(/\]\(([^)]+)\)/g), (match) => match[1]);
-  assert.ok(links.includes("https://github.com/atrinik/resources/issues/42"));
-  assert.ok(links.includes("https://github.com/atrinik/resources/compare/v1.0.0...v2.0.0"));
+  assert.ok(links.some((target) => target === "https://github.com/atrinik/resources/issues/42"));
+  assert.ok(links.some((target) => target === "https://github.com/atrinik/resources/compare/v1.0.0...v2.0.0"));
   console.log("release notes: configured plugin rendered fixes, features, breaking changes and links");
 }
 
