@@ -45,6 +45,9 @@ jobs:
       - name: Validate release dependency lockfile
         run: npm ci --ignore-scripts --no-audit --no-fund
 
+      - name: Validate release policy and notes generation
+        run: npm run test:release
+
       - name: Fetch pinned historical provenance
         run: tools/resource-inventory.py fetch-provenance
 
