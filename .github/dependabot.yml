@@ -21,3 +21,9 @@ updates:
           - "*"
     assignees:
       - zoeyrose
+    ignore:
+      # v10 requires conventional-changelog-writer 9, but semantic-release's
+      # release-notes-generator still resolves writer 8, so release-notes
+      # generation fails. Remove once semantic-release supports writer 9.
+      - dependency-name: conventional-changelog-conventionalcommits
+        update-types: ["version-update:semver-major"]
